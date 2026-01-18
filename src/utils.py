@@ -447,6 +447,8 @@ class Dataset:
                 self.graph_list = graph
             else:
                 self.graph_list = graph[:debugnum]
+
+            print("450 in utils.py:===========> Total graphs used: ", len(self.graph_list))    
             
             if 'g' in self.labels_have:
                 self.graph_label = label['glabel'][:len(self.graph_list)]
@@ -577,6 +579,7 @@ class Dataset:
         samples = total_trials
         print("sample",samples)
         if len(self.graph_list) > 1: # multi-graph
+            print("what the fuck", len(self.graph_list))
             self.is_single_graph = False
             graph_num = len(self.graph_list)
             indexs = list(range(graph_num))
@@ -598,7 +601,7 @@ class Dataset:
             graph_num = 3 * samples
             node_indexs = list(range(ori_graph.num_nodes()))
             node_labels = self.node_label[0]
-            print("node_labels", node_labels)
+            print("node_labels", node_labels, len(node_labels), graph_num)
             self.graph_train_masks = torch.zeros([graph_num, samples]).bool()
             self.graph_val_masks = torch.zeros([graph_num, samples]).bool()
             self.graph_test_masks = torch.zeros([graph_num, samples]).bool()
@@ -619,7 +622,7 @@ class Dataset:
                 idx_valid, idx_test, y_valid, y_test = train_test_split(idx_rest, y_rest, stratify=y_rest, train_size=val_ratio/(1-train_ratio), random_state=seed, shuffle=True)
                 # setup the node masks
                 if i <= 1:
-                    print(f"Check split: Sample {i} train/val/test node nums: {len(idx_train)}/{len(idx_valid)}/{len(idx_test)}, {idx_train}, {y_train}")
+                    print(f"623 utils: Check split: Sample {i} train/val/test node nums: {len(idx_train)}/{len(idx_valid)}/{len(idx_test)}, {idx_train}, {y_train}")
                 self.train_mask_node.append( torch.tensor(idx_train).long() )
                 self.val_mask_node.append( torch.tensor(idx_valid).long() )
                 self.test_mask_node.append( torch.tensor(idx_test).long() )
@@ -628,8 +631,8 @@ class Dataset:
                 val_graph_tmp = dgl.node_subgraph(ori_graph, idx_valid, store_ids=True)
                 test_graph_tmp = dgl.node_subgraph(ori_graph, idx_test, store_ids=True)
                 self.train_mask_edge.append( train_graph_tmp.edata[dgl.EID] ) # original edge ids
-                print(f"Sample {i} train edge num: {len(self.train_mask_edge[-1])}, {dgl.EID}")
-                print("check", train_graph_tmp.edata )
+                print(f"632 utilsSample {i} train edge num: {len(self.train_mask_edge[-1])}, {dgl.EID}")
+                print("633check", train_graph_tmp.edata )
                 self.val_mask_edge.append( val_graph_tmp.edata[dgl.EID] )
                 self.test_mask_edge.append( test_graph_tmp.edata[dgl.EID] )
                 
