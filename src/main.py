@@ -55,6 +55,7 @@ def pretrain(model, train_dataloader, args):
 def work(dataset: Dataset, kernel='gcn', cross_mode='ng2ng', args=None):
     time_cost = 0
     pretrain_model_name = args.pretrain_model
+    print(f"58: Working on dataset {dataset.name} with kernel {kernel} and cross_mode {cross_mode} model {pretrain_model_name}")
     if '-' in kernel:
         encoder_type, decoder_type = kernel.split('-')
     else:
@@ -66,9 +67,9 @@ def work(dataset: Dataset, kernel='gcn', cross_mode='ng2ng', args=None):
     full_model_name = pretrain_model_name + '-' + encoder_name
     hop = args.khop
     dataset_name = dataset.name.replace('/', '.')
-    print(f"preparing the dataset for {args.trials} trials")
+    print(f"70: preparing the dataset for {args.trials} trials")
     dataset.prepare_dataset(total_trials=args.trials)
-    print(f"making the subpooling matrix")
+    print(f"72: making the subpooling matrix")
     dataset.make_sp_matrix_graph_list(khop=hop, load_kg=(not args.force_remake_sp))
 
     ####################### pretrain model start
@@ -212,14 +213,15 @@ def main():
             dataset = Dataset(dataset_name+'-els', prefix='../datasets/edge_labels/', sp_type=sp_type, labels_have='ne')
         else:
             dataset = Dataset(dataset_name)
-        continue
+            
         # metrics to save
+         
         columns = ['name']
         results = pandas.DataFrame(columns=columns)
         
         for kernel in kernels:
             # parse pre-train model and encoder name
-            print('Evaluating model: ', args.pretrain_model + kernel)
+            print('223: Evaluating model: ', args.pretrain_model + kernel)
             # iterate over all cross modes
             for cross_mode in cross_modes:
                 # work

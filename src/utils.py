@@ -575,6 +575,7 @@ class Dataset:
         if "mnist0" in self.name or "mnist1" in self.name:
             train_ratio, val_ratio = 0.1, 0.1
         samples = total_trials
+        print("sample",samples)
         if len(self.graph_list) > 1: # multi-graph
             self.is_single_graph = False
             graph_num = len(self.graph_list)
@@ -597,6 +598,7 @@ class Dataset:
             graph_num = 3 * samples
             node_indexs = list(range(ori_graph.num_nodes()))
             node_labels = self.node_label[0]
+            print("node_labels", node_labels)
             self.graph_train_masks = torch.zeros([graph_num, samples]).bool()
             self.graph_val_masks = torch.zeros([graph_num, samples]).bool()
             self.graph_test_masks = torch.zeros([graph_num, samples]).bool()
@@ -616,6 +618,8 @@ class Dataset:
                 idx_train, idx_rest, y_train, y_rest = train_test_split(node_indexs, node_labels, stratify=node_labels, train_size=train_ratio, random_state=seed, shuffle=True)
                 idx_valid, idx_test, y_valid, y_test = train_test_split(idx_rest, y_rest, stratify=y_rest, train_size=val_ratio/(1-train_ratio), random_state=seed, shuffle=True)
                 # setup the node masks
+                if i <= 1:
+                    print(f"Check split: Sample {i} train/val/test node nums: {len(idx_train)}/{len(idx_valid)}/{len(idx_test)}, {idx_train}, {y_train}")
                 self.train_mask_node.append( torch.tensor(idx_train).long() )
                 self.val_mask_node.append( torch.tensor(idx_valid).long() )
                 self.test_mask_node.append( torch.tensor(idx_test).long() )
@@ -624,6 +628,8 @@ class Dataset:
                 val_graph_tmp = dgl.node_subgraph(ori_graph, idx_valid, store_ids=True)
                 test_graph_tmp = dgl.node_subgraph(ori_graph, idx_test, store_ids=True)
                 self.train_mask_edge.append( train_graph_tmp.edata[dgl.EID] ) # original edge ids
+                print(f"Sample {i} train edge num: {len(self.train_mask_edge[-1])}, {dgl.EID}")
+                print("check", train_graph_tmp.edata )
                 self.val_mask_edge.append( val_graph_tmp.edata[dgl.EID] )
                 self.test_mask_edge.append( test_graph_tmp.edata[dgl.EID] )
                 
