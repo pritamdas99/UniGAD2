@@ -436,9 +436,9 @@ class Dataset:
             for i in range(gs):
                 print("437 start in utils.py=============> what's in graph ", i)
                 print(graph[i])
-                print("")
+                print("end of graph[i]")
                 print(graph[i].ndata)
-                print("")
+                print("end of graphi ndata")
                 print(graph[i].ndata['feature'])
                 print("print==> end of 437", graph[i].ndata['feature'].shape)
             print("444 in utils.py:===========> Total graphs loaded: ", len(graph))
