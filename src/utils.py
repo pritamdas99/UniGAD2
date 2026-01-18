@@ -430,7 +430,7 @@ class Dataset:
             self.labels_have = labels_have
             # graph list as well as node labels
             graph, label = load_graphs(prefix + name)
-            gs = graph.shape[0]
+            gs = len(graph)
             if gs>10:
                 gs=10
             for i in range(gs):
