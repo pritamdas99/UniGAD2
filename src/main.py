@@ -170,7 +170,7 @@ def main():
             dataset_names = DATASETS[int(st):int(ed)+1]
         else:
             dataset_names = [DATASETS[int(t)] for t in args.datasets.split(',')]
-        print('All Datasets: ', dataset_names)
+        print('173:========>> All Datasets: ', dataset_names)
 
     if args.cross_modes is not None:
         cross_modes = args.cross_modes.split(',')
@@ -187,7 +187,7 @@ def main():
     for dataset_name in dataset_names:
         # parse dataset
         # dataset_name = DATASETS[dataset_id]
-        print('Evaluating dataset: ', dataset_name)
+        print('190:================> Evaluating dataset: ', dataset_name)
 
         ### settings
         # load dataset 
@@ -212,6 +212,7 @@ def main():
             dataset = Dataset(dataset_name+'-els', prefix='../datasets/edge_labels/', sp_type=sp_type, labels_have='ne')
         else:
             dataset = Dataset(dataset_name)
+        continue
         # metrics to save
         columns = ['name']
         results = pandas.DataFrame(columns=columns)

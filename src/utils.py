@@ -418,11 +418,30 @@ class Dataset:
             self.name = name
             self.graph = graph
             self.in_dim = graph.ndata['feature'].shape[1]
+            print("421 in utils.py=============> what's in graph ", i)
+            print(graph)
+            print("")
+            print(graph.ndata)
+            print("")
+            print(graph.ndata['feature'])
+            print("print==> end of 421", graph.ndata['feature'].shape)
         else:
             print("Unified dataset ", prefix + name, labels_have)
             self.labels_have = labels_have
             # graph list as well as node labels
             graph, label = load_graphs(prefix + name)
+            gs = graph.shape[0]
+            if gs>10:
+                gs=10
+            for i in range(gs):
+                print("437 start in utils.py=============> what's in graph ", i)
+                print(graph[i])
+                print("")
+                print(graph[i].ndata)
+                print("")
+                print(graph[i].ndata['feature'])
+                print("print==> end of 437", graph[i].ndata['feature'].shape)
+            print("444 in utils.py:===========> Total graphs loaded: ", len(graph))
             self.name = name
             if debugnum == -1:
                 self.graph_list = graph
