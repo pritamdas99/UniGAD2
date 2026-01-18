@@ -632,7 +632,7 @@ class Dataset:
                 test_graph_tmp = dgl.node_subgraph(ori_graph, idx_test, store_ids=True)
                 self.train_mask_edge.append( train_graph_tmp.edata[dgl.EID] ) # original edge ids
                 print(f"632 utils Sample {i} train edge num: {len(self.train_mask_edge[-1])}, {dgl.EID}")
-                print("633check", train_graph_tmp.edata )
+                print("633 check", train_graph_tmp.edata )
                 self.val_mask_edge.append( val_graph_tmp.edata[dgl.EID] )
                 self.test_mask_edge.append( test_graph_tmp.edata[dgl.EID] )
                 
