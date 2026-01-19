@@ -69,7 +69,7 @@ def work(dataset: Dataset, kernel='gcn', cross_mode='ng2ng', args=None):
     dataset_name = dataset.name.replace('/', '.')
     print(f"70: preparing the dataset for {args.trials} trials")
     dataset.prepare_dataset(total_trials=args.trials)
-    print(f"72: making the subpooling matrix")
+    print(f"72: making the subpooling matrix", args.force_remake_sp)
     dataset.make_sp_matrix_graph_list(khop=hop, load_kg=(not args.force_remake_sp))
 
     ####################### pretrain model start

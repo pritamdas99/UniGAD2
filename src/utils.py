@@ -299,10 +299,13 @@ def select_topk_star_unionft(star_khop_graph_big, node_ids, central_node_id):
 def get_star_topk_nbs(star_khop_graph_big, central_node_id, khop, select_topk):
     star_khop_graph_in = star_khop_graph_big.sample_neighbors([central_node_id],fanout=-1, edge_dir='in')
     star_khop_graph_out = star_khop_graph_big.sample_neighbors([central_node_id],fanout=-1, edge_dir='out')
-
+    print("### util topknbs: star_khop_graph_in", star_khop_graph_in.edges())
+    print("### util topknbs: star_khop_graph_out", star_khop_graph_out.edges())
     node_ids_in = star_khop_graph_in.edges()[0]
     node_ids_out = star_khop_graph_out.edges()[1]
     node_ids = torch.cat([node_ids_in, node_ids_out], dim=0)
+    print("### util topknbs: node_ids_in", node_ids_in, "out", node_ids_out)
+    print("### util topknbs: node_ids", node_ids)
     node_ids = torch.unique(node_ids)
 
 
@@ -495,6 +498,7 @@ class Dataset:
         if load_kg and os.path.exists(self.sp_matrix_graphs_filename):
             self.sp_matrix_graph_list, _ = load_graphs(self.sp_matrix_graphs_filename)
         else:
+            print("### util: graph list len: ", len(self.graph_list))
             for idx,graph in enumerate(tqdm(self.graph_list)):
                 with graph.local_scope():
                     if self.agg_ft == 'norm':
@@ -503,18 +507,20 @@ class Dataset:
                         else:
                             graph.ndata['feature_normed'] =  graph.ndata['feature']
                             # norm it
-                            graph.ndata['feature_normed'] -= graph.ndata['feature_normed'].min(0, keepdim=True)[0]
-                            graph.ndata['feature_normed'] /= graph.ndata['feature_normed'].max(0, keepdim=True)[0] + EPS
-                            graph.ndata['feature_normed'] = torch.norm(graph.ndata['feature_normed'], dim=1)
+                            graph.ndata['feature_normed'] -= graph.ndata['feature_normed'].min(0, keepdim=True)[0] # take min value per column
+                            graph.ndata['feature_normed'] /= graph.ndata['feature_normed'].max(0, keepdim=True)[0] + EPS # N by F
+                            graph.ndata['feature_normed'] = torch.norm(graph.ndata['feature_normed'], dim=1) # L2 Norm per node dim: N by 1
                     if khop !=0 :
                         sp_matrix_graph = dgl.graph(([], []))
                         sp_matrix_graph.add_nodes(graph.num_nodes()) # keep the node num same
                         if self.sp_method == 'star':
                             assert khop == 1
                             transform = KHopGraph(khop)
+                            print("### sp func: what is transform: ",transform.type)
                             tmp_graph = transform(graph)
                             tmp_graph = tmp_graph.to_simple()
                             tmp_graph = tmp_graph.remove_self_loop()
+                            print("### spfunc: graph after k-hop transform edges:", tmp_graph, "edges", tmp_graph.edges())
                         elif self.sp_method == 'convtree':
                             assert khop == 2
                             # we directly use the big graph
@@ -525,6 +531,7 @@ class Dataset:
                             tmp_graph = tmp_graph.to_simple()
                             tmp_graph = tmp_graph.remove_self_loop()
                         for central_node_id in graph.nodes():
+                            print("### sp func: central_node_id ", central_node_id, central_node_id.item())
                             adj_list, weight_list = self.get_sp_adj_list(tmp_graph, central_node_id.item(), khop, self.select_topk_fn)
                             sp_matrix_graph.add_edges(adj_list, central_node_id.long(), {'pw': torch.tensor(weight_list) }) # adj_list->node_id, edata['pw'] = weights
                         self.sp_matrix_graph_list.append(sp_matrix_graph)
