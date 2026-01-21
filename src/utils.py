@@ -533,7 +533,9 @@ class Dataset:
                         for central_node_id in graph.nodes():
                             print("### sp func: central_node_id ", central_node_id, central_node_id.item())
                             adj_list, weight_list = self.get_sp_adj_list(tmp_graph, central_node_id.item(), khop, self.select_topk_fn)
+                            print("### sp func: adj_list ", adj_list)
                             sp_matrix_graph.add_edges(adj_list, central_node_id.long(), {'pw': torch.tensor(weight_list) }) # adj_list->node_id, edata['pw'] = weights
+                        
                         self.sp_matrix_graph_list.append(sp_matrix_graph)
                     else:
                         self.sp_matrix_graph_list.append(dgl.graph(([], []))) # make a empty graph

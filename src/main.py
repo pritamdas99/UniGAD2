@@ -33,6 +33,8 @@ def pretrain(model, train_dataloader, args):
         for batched_data in train_dataloader:
             # we don't need labels for pretrain task
             batched_graph = batched_data 
+            print("### batched_graph edges:", batched_graph.edges())
+            print("### batched_graph ndata:", batched_graph)
             batched_graph = batched_graph.to(device)
             loss, loss_dict = model(batched_graph, batched_graph.ndata["feature"])
 
